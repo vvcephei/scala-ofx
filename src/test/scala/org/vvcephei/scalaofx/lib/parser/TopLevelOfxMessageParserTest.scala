@@ -4,10 +4,10 @@ import org.scalatest.FunSuite
 import scala.xml.PrettyPrinter
 
 
-class TopLevelParserTest extends FunSuite {
+class TopLevelOfxMessageParserTest extends FunSuite {
   test("TopLevelParser") {
     val ppr = new PrettyPrinter(80, 2)
-    val parse = TopLevelParser.parse(Data.result1)
+    val parse = TopLevelOfxMessageParser.parse(Data.result1)
     assert(ppr.format(parse.ofx) == ppr.format(Data.ofx1p))
   }
 

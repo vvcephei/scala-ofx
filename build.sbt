@@ -27,11 +27,11 @@ libraryDependencies ++= Seq(
     "org.scalatest" % "scalatest_2.10" % "2.0" % "test"
 )
 
-mainClass := Some("org.vvcephei.scalaofx.client.Test")
+mainClass := Some("org.vvcephei.scalaofx.cli.CLI")
 
 net.virtualvoid.sbt.graph.Plugin.graphSettings
 
 assemblySettings
 
-mainClass in assembly := Some("org.vvcephei.scalaofx.client.Test")
+mainClass in assembly := Some("org.vvcephei.scalaofx.cli.CLI")
 

@@ -4,7 +4,7 @@ import scala.xml.Elem
 
 case class OfxMessage(header: Map[String, String], ofx: Elem)
 
-object TopLevelParser {
+object TopLevelOfxMessageParser {
   private val headerline = """(\p{Alpha}+):([^\r\n]*)[\r\n]*""".r("headerkey", "headerval")
   private val blankLine = """^\s*$""".r
   private val sgmlStart = """^\s*<""".r
