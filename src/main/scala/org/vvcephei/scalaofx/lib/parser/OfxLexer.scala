@@ -16,26 +16,30 @@ object OfxLexer {
 
   def lexRemoveOptionalTags(string: String): List[OfxLexicalItem] = withoutOptionalTags(l2Lex(l1Lex(string)))
 
-  private def withEndTags(ofx: List[OfxLexicalItem]): List[OfxLexicalItem] =
+  private def withEndTags(ofx: List[OfxLexicalItem], result: List[OfxLexicalItem] = Nil): List[OfxLexicalItem] =
     ofx match {
-      case Nil => Nil
-      case OpenTag(name) :: Text(text) :: OpenTag(nextName) :: rest => OpenTag(name) :: Text(text) :: CloseTag(name) :: withEndTags(OpenTag(nextName) :: rest)
-      case OpenTag(openName) :: Text(text) :: CloseTag(closeName) :: rest if openName != closeName => OpenTag(openName) :: Text(text) :: CloseTag(openName) :: withEndTags(CloseTag(closeName) :: rest)
-      case tag :: rest => tag :: withEndTags(rest)
+      case Nil => result.reverse
+      case OpenTag(name) :: Text(text) :: OpenTag(nextName) :: rest =>
+        withEndTags(OpenTag(nextName) :: rest, CloseTag(name) :: Text(text) :: OpenTag(name) :: result)
+      case OpenTag(openName) :: Text(text) :: CloseTag(closeName) :: rest if openName != closeName =>
+        withEndTags(CloseTag(closeName) :: rest, CloseTag(openName) :: Text(text) :: OpenTag(openName) :: result)
+      case tag :: rest =>
+        withEndTags(rest, tag :: result)
     }
 
-  private def withoutOptionalTags(ofx: List[OfxLexicalItem]): List[OfxLexicalItem] =
+  private def withoutOptionalTags(ofx: List[OfxLexicalItem], result: List[OfxLexicalItem] = Nil): List[OfxLexicalItem] =
     ofx match {
-      case Nil => Nil
-      case OpenTag(oName) :: Text(text) :: CloseTag(cName) :: rest if oName == cName => OpenTag(oName) :: Text(text) :: withoutOptionalTags(rest)
-      case tag :: rest => tag :: withoutOptionalTags(rest)
+      case Nil => result.reverse
+      case OpenTag(oName) :: Text(text) :: CloseTag(cName) :: rest if oName == cName =>
+        withoutOptionalTags(rest, Text(text) :: OpenTag(oName) :: result)
+      case tag :: rest => withoutOptionalTags(rest, tag :: result)
     }
 
-  private def l2Lex(l1lex: List[L1OfxLexicalItem]): List[OfxLexicalItem] = l1lex match {
-    case Nil => Nil
-    case OpenTagStart() :: L1Text(text) :: TagEnd() :: rest => OpenTag(text) :: l2Lex(rest)
-    case CloseTagStart() :: L1Text(text) :: TagEnd() :: rest => CloseTag(text) :: l2Lex(rest)
-    case L1Text(text) :: rest => Text(text) :: l2Lex(rest)
+  private def l2Lex(l1lex: List[L1OfxLexicalItem], result: List[OfxLexicalItem] = Nil): List[OfxLexicalItem] = l1lex match {
+    case Nil => result.reverse
+    case OpenTagStart() :: L1Text(text) :: TagEnd() :: rest => l2Lex(rest, OpenTag(text) :: result)
+    case CloseTagStart() :: L1Text(text) :: TagEnd() :: rest => l2Lex(rest, CloseTag(text) :: result)
+    case L1Text(text) :: rest => l2Lex(rest, Text(text) :: result)
     case _ => throw new IllegalArgumentException("apparently invalid input: %s".format(l1lex))
   }
 

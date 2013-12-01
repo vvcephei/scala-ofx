@@ -16,4 +16,14 @@ class OfxParserTest extends FunSuite {
     assert(trim(parse) == trim(expected))
   }
 
+  test("to ofx") {
+    val xml = <OFX>
+      <WORDS>words words</WORDS>
+      <MORE>more</MORE>
+    </OFX>
+    assert(OfxParser.toStrictOfx(xml) == """<OFX>
+                                           |      <WORDS>words words
+                                           |      <MORE>more
+                                           |    </OFX>""".stripMargin)
+  }
 }
