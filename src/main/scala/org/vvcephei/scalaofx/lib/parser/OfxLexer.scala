@@ -16,6 +16,7 @@ object OfxLexer {
 
   def lexRemoveOptionalTags(string: String): List[OfxLexicalItem] = withoutOptionalTags(l2Lex(l1Lex(string)))
 
+  //TODO: Stream processing is probaly better
   private def withEndTags(ofx: List[OfxLexicalItem], result: List[OfxLexicalItem] = Nil): List[OfxLexicalItem] =
     ofx match {
       case Nil => result.reverse
@@ -27,6 +28,7 @@ object OfxLexer {
         withEndTags(rest, tag :: result)
     }
 
+  //TODO: Stream processing is probaly better
   private def withoutOptionalTags(ofx: List[OfxLexicalItem], result: List[OfxLexicalItem] = Nil): List[OfxLexicalItem] =
     ofx match {
       case Nil => result.reverse
@@ -35,6 +37,7 @@ object OfxLexer {
       case tag :: rest => withoutOptionalTags(rest, tag :: result)
     }
 
+  //TODO: Stream processing is probaly better
   private def l2Lex(l1lex: List[L1OfxLexicalItem], result: List[OfxLexicalItem] = Nil): List[OfxLexicalItem] = l1lex match {
     case Nil => result.reverse
     case OpenTagStart() :: L1Text(text) :: TagEnd() :: rest => l2Lex(rest, OpenTag(text) :: result)
@@ -43,6 +46,7 @@ object OfxLexer {
     case _ => throw new IllegalArgumentException("apparently invalid input: %s".format(l1lex))
   }
 
+  //TODO: Stream processing is probaly better
   private def l1Lex(string: String): List[L1OfxLexicalItem] = {
     var openTag = false
     var currentText = List[Char]()

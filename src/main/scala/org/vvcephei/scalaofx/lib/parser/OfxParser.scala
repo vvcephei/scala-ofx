@@ -9,6 +9,7 @@ object OfxParser {
   // Pretty dumb that this is a thing...
   def toStrictOfx(elem: Elem): String = innerToXmlString(OfxLexer.lexRemoveOptionalTags(elem.toString)).mkString
 
+  //TODO: Stream processing is probaly better
   private def innerToXmlString(validXml: List[OfxLexicalItem], result: List[String] = Nil): List[String] = validXml match {
     case Nil => result.reverse
     case OpenTag(name) :: rest => innerToXmlString(rest, "<" + name + ">" :: result)
