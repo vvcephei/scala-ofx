@@ -1,0 +1,16 @@
+# This config provides scala-ofx with the ofx connection information it needs.
+#
+# To find the information for your bank, try:
+#  - http://www.ofxhome.com/index.php/home/directory
+#  - http://moneydance.com/synch/moneydance/fi2004.dict#
+#  - http://wiki.gnucash.org/wiki/Talk:Setting_up_OFXDirectConnect_in_GnuCash_2
+#  - http://microsoftmoneyoffline.wordpress.com/look-up-your-ofx-settings/
+#  or just contact your bank directly.
+
+ofx:
+  capitalone360:
+    bootstrapUrl: https://ofx.capitalone360.com/OFX/ofx.html
+    fiOrg: ING DIRECT
+    fiId: 031176110
+    appId: Money
+    appVer: 1400
