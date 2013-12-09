@@ -3,13 +3,13 @@ package org.vvcephei.scalaofx.client
 import org.vvcephei.scalaofx.lib.message._
 import com.sun.jersey.api.client.Client
 import org.vvcephei.scalaofx.lib.parser.{OfxParser, TopLevelOfxMessageParser, OfxMessage}
-import org.vvcephei.scalaofx.lib.model.response.{BankStatementResponse, BankAccountInfo}
+import org.vvcephei.scalaofx.lib.model.response.{BankStatementResponse, BankStatement, BankAccountInfo}
 import scala.xml.PrettyPrinter
 import org.vvcephei.scalaofx.lib.model.Account
 import org.vvcephei.scalaofx.lib.model.User
 import org.vvcephei.scalaofx.lib.message.SignOn
 import org.vvcephei.scalaofx.lib.model.Bank
-import org.vvcephei.scalaofx.lib.message.BankStatement
+import org.vvcephei.scalaofx.lib.message.BankStatementRequest
 import org.joda.time.DateTime
 
 case class BankClient(user: User, bank: Bank, client: Client = new Client(), debug: Boolean = false) {
@@ -27,8 +27,11 @@ case class BankClient(user: User, bank: Bank, client: Client = new Client(), deb
    * @return The raw sign on response
    */
   def signOn(): OfxMessage = {
+    val contentType = "application/x-ofx"
+    if (debug) println(bank.bootstrapUrl)
+    if (debug) println(contentType)
     if (debug) println(signOnRequest)
-    val response = client.resource(bank.bootstrapUrl).`type`("application/x-ofx").post(classOf[String], signOnRequest)
+    val response = client.resource(bank.bootstrapUrl).`type`(contentType).post(classOf[String], signOnRequest)
     val parsed = TopLevelOfxMessageParser.parse(response)
     parsed
   }
@@ -74,18 +77,18 @@ case class BankClient(user: User, bank: Bank, client: Client = new Client(), deb
       <OFX>
         {SignOn(user, bank).toOfx}<BANKMSGSRQV1>
         {for (account <- accounts) yield {
-          BankStatement(account, startDate).toOfx
+          BankStatementRequest(account, startDate).toOfx
         }}
       </BANKMSGSRQV1>
       </OFX>
     )
 
-  def bankStatements(accounts: Seq[Account], startDate: DateTime): Seq[BankStatementResponse] = {
+  def bankStatements(accounts: Seq[Account], startDate: DateTime): BankStatementResponse = {
     val request: String = bankStatementRequest(accounts, startDate)
     if (debug) println(request)
     val response = client.resource(bank.bootstrapUrl).`type`("application/x-ofx").post(classOf[String], request)
     val parsed = TopLevelOfxMessageParser parse response
     if (debug) println(ppr format parsed.ofx)
-    BankStatementResponse.fromOfx(parsed.ofx)
+    BankStatement.fromOfx(parsed.ofx)
   }
 }

@@ -44,9 +44,10 @@ val info: Seq[BankAccountInfo] = bc.accountInfo()
 val accounts: Seq[Account] = Seq(
   Account(routing = "12345", account = "09871", SAVINGS),
   Account(routing = "12345", account = "09871", CHECKING))
-val statements: Seq[BankStatementResponse] = bc.bankStatements(accounts, Options.start)
+val statements: BankStatementResponse = bc.bankStatements(accounts, Options.start)
+// request errors are available in statements.errors
 
-for (statement <- statements) {
+for (statement <- statements.statements) {
   println(s"Balance: ${statement.availableBalance}")
   for (transaction <- statement.transactions) {
     println(s"date: ${transaction.posted}, type: ${transaction.`type`}, amount: ${transaction.amount}, payee: ${transaction.name}, memo: ${transaction.memo}")

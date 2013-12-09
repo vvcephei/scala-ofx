@@ -7,10 +7,27 @@ import org.vvcephei.scalaofx.lib.message.Util
 
 case class Transaction(`type`: TransactionType, posted: DateTime, amount: Double, transactionId: String, name: Option[String], memo: Option[String])
 
-case class BankStatementResponse(currency: String, account: Account, startTime: DateTime, endTime: Option[DateTime], transactions: Seq[Transaction], ledgerBalance: Double, availableBalance: Double)
+case class BankStatementResponse(statements: Seq[BankStatement], errors: Seq[BankStatementError])
 
-object BankStatementResponse {
-  def fromOfx(ofx: Elem): Seq[BankStatementResponse] =
+case class BankStatement(currency: String, account: Account, startTime: DateTime, endTime: Option[DateTime], transactions: Seq[Transaction], ledgerBalance: Double, availableBalance: Double)
+
+case class BankStatementError(code: String, severity: String, message: String)
+
+object BankStatement {
+  def fromOfx(ofx:Elem): BankStatementResponse = BankStatementResponse(statements(ofx), errors(ofx))
+
+  def errors(ofx: Elem): Seq[BankStatementError] =
+    for {
+      status <- ofx \\ "STATUS"
+      code <- status \ "CODE"
+      severity <- status \ "SEVERITY"
+      message <- status \ "MESSAGE"
+      if severity.text.toLowerCase == "error"
+    } yield {
+      BankStatementError(code.text, severity.text, message.text)
+    }
+
+  def statements(ofx: Elem): Seq[BankStatement] =
     for {
       statement <- ofx \\ "STMTRS"
       currency <- statement \ "CURDEF"
@@ -24,7 +41,7 @@ object BankStatementResponse {
       ledgerBal <- statement \ "LEDGERBAL" \ "BALAMT"
       availableBal <- statement \ "AVAILBAL" \ "BALAMT"
     } yield {
-      BankStatementResponse(
+      BankStatement(
         currency.text,
         Account(bankId.text, accountId.text, AccountType.valueOf(accountType.text)),
         Util.fromDateTimeWithZoneString(statementStart.text),

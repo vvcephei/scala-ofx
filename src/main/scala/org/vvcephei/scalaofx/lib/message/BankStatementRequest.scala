@@ -3,7 +3,7 @@ package org.vvcephei.scalaofx.lib.message
 import org.vvcephei.scalaofx.lib.model.Account
 import org.joda.time.DateTime
 
-case class BankStatement(account: Account, startDate: DateTime) {
+case class BankStatementRequest(account: Account, startDate: DateTime) {
   lazy val toOfx =
       <STMTTRNRQ>
         <TRNUID>{ Util.trnuid() }</TRNUID>

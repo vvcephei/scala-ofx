@@ -8,7 +8,7 @@ import scala.xml.PrettyPrinter
 import com.beust.jcommander.JCommander
 import org.vvcephei.scalaofx.client.BankClient
 import org.vvcephei.scalaofx.lib.parser.OfxMessage
-import org.vvcephei.scalaofx.lib.model.response.{BankStatementResponse, BankAccountInfo}
+import org.vvcephei.scalaofx.lib.model.response.{BankStatementResponse, BankStatement, BankAccountInfo}
 
 object CLI {
   private val mapper = new ObjectMapper() with ScalaObjectMapper {
@@ -46,10 +46,11 @@ object CLI {
 
       println()
       println(" statement")
-      val statements: Seq[BankStatementResponse] = bc.bankStatements(accounts, Options.start)
-      println(mapper writeValueAsString statements)
+      val statements: BankStatementResponse = bc.bankStatements(accounts, Options.start)
+      println(mapper writeValueAsString statements.errors)
+      println(mapper writeValueAsString statements.statements)
 
-      for (statement <- statements) {
+      for (statement <- statements.statements) {
         println(s"Balance: ${statement.availableBalance}")
         for (transaction <- statement.transactions) {
           println(s"date: ${transaction.posted}, type: ${transaction.`type`}, amount: ${transaction.amount}, payee: ${transaction.name}, memo: ${transaction.memo}")
