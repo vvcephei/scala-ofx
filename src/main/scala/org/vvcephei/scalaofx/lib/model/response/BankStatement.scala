@@ -9,7 +9,7 @@ case class Transaction(`type`: TransactionType, posted: DateTime, amount: Double
 
 case class BankStatementResponse(statements: Seq[BankStatement], errors: Seq[BankStatementError])
 
-case class BankStatement(currency: String, account: Account, startTime: DateTime, endTime: Option[DateTime], transactions: Seq[Transaction], ledgerBalance: Double, availableBalance: Double)
+case class BankStatement(currency: String, account: Account, startTime: DateTime, endTime: Option[DateTime], transactions: Seq[Transaction], ledgerBalance: Double, availableBalance: Option[Double])
 
 case class BankStatementError(code: String, severity: String, message: String)
 
@@ -39,13 +39,13 @@ object BankStatement {
       statementStart <- transactionList \ "DTSTART"
       statementEnd = (transactionList \ "DTEND").map(_.text).headOption
       ledgerBal <- statement \ "LEDGERBAL" \ "BALAMT"
-      availableBal <- statement \ "AVAILBAL" \ "BALAMT"
+      availableBal = statement \ "AVAILBAL" \ "BALAMT"
     } yield {
       BankStatement(
         currency.text,
         Account(bankId.text, accountId.text, AccountType.valueOf(accountType.text)),
-        Util.fromDateTimeWithZoneString(statementStart.text),
-        statementEnd map Util.fromDateTimeWithZoneString,
+        Util.fromStringInferred(statementStart.text),
+        statementEnd map Util.fromStringInferred,
         for {
           transaction <- transactionList \ "STMTTRN"
           transactionType <- transaction \ "TRNTYPE"
@@ -57,7 +57,7 @@ object BankStatement {
         } yield {
           Transaction(
             TransactionType.valueOf(transactionType.text),
-            Util.fromDateTimeString(posted.text),
+            Util.fromStringInferred(posted.text),
             amount.text.toDouble,
             id.text,
             name,
@@ -65,7 +65,7 @@ object BankStatement {
           )
         },
         ledgerBal.text.toDouble,
-        availableBal.text.toDouble
+        availableBal.map(_.text.toDouble).headOption
       )
     }
 }

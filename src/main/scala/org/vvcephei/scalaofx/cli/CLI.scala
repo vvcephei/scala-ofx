@@ -6,9 +6,10 @@ import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.fasterxml.jackson.datatype.joda.JodaModule
 import scala.xml.PrettyPrinter
 import com.beust.jcommander.JCommander
-import org.vvcephei.scalaofx.client.BankClient
+import org.vvcephei.scalaofx.client.{SourceClient, BankClient}
 import org.vvcephei.scalaofx.lib.parser.OfxMessage
 import org.vvcephei.scalaofx.lib.model.response.{BankStatementResponse, BankStatement, BankAccountInfo}
+import scala.io.Source
 
 object CLI {
   private val mapper = new ObjectMapper() with ScalaObjectMapper {
@@ -20,6 +21,12 @@ object CLI {
 
   def main(args: Array[String]): Unit = {
     new JCommander(Options, args: _*)
+
+    if (!Options.ofxFile.isEmpty) {
+      val statements = SourceClient.bankStatements(Source.fromFile(Options.ofxFile))
+      println(statements)
+      printStatements(statements.statements)
+    }
 
     for ((login, accounts) <- Options.loginToAccounts) {
       val bc = BankClient(login.user, login.bank, debug = Options.verbose)
@@ -50,11 +57,15 @@ object CLI {
       println(mapper writeValueAsString statements.errors)
       println(mapper writeValueAsString statements.statements)
 
-      for (statement <- statements.statements) {
-        println(s"Balance: ${statement.availableBalance}")
-        for (transaction <- statement.transactions) {
-          println(s"date: ${transaction.posted}, type: ${transaction.`type`}, amount: ${transaction.amount}, payee: ${transaction.name}, memo: ${transaction.memo}")
-        }
+      printStatements(statements.statements)
+    }
+  }
+
+  def printStatements(statements: Seq[BankStatement]) {
+    for (statement <- statements) {
+      println(s"Balance: ${statement.availableBalance}")
+      for (transaction <- statement.transactions) {
+        println(s"date: ${transaction.posted}, type: ${transaction.`type`}, amount: ${transaction.amount}, payee: ${transaction.name}, memo: ${transaction.memo}")
       }
     }
   }

@@ -6,12 +6,20 @@ case class AccountStatement(account: Account) {
   lazy val toOfx =
     <BANKMSGSRQV1>
       <STMTTRNRQ>
-        <TRNUID>{ Util.trnuid() }</TRNUID>
+        <TRNUID>
+          {Util.trnuid()}
+        </TRNUID>
         <STMTRQ>
           <BANKACCTFROM>
-            <BANKID> { account.routing } </BANKID>
-            <ACCTID> { account.account } </ACCTID>
-            <ACCTTYPE> { account.`type`.toString } </ACCTTYPE>
+            <BANKID>
+              {account.routing}
+            </BANKID>
+            <ACCTID>
+              {account.account}
+            </ACCTID>
+            <ACCTTYPE>
+              {account.`type`.toString}
+            </ACCTTYPE>
           </BANKACCTFROM>
           <INCTRAN>
             <INCLUDE>Y</INCLUDE>
@@ -19,5 +27,4 @@ case class AccountStatement(account: Account) {
         </STMTRQ>
       </STMTTRNRQ>
     </BANKMSGSRQV1>
-
 }

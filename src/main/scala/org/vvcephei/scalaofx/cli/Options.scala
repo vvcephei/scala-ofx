@@ -11,10 +11,14 @@ import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.fasterxml.jackson.datatype.joda.JodaModule
 import java.io.File
 import scala.collection.JavaConversions._
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 
 object Options {
   @Parameter(names = Array("-v", "--verbose"), description = "Prints lots of info about transactions")
   var verbose: Boolean = false
+
+  @Parameter(names = Array("--ofx"), description = "Loads from an ofx file")
+  var ofxFile: String = ""
 
   @Parameter(names = Array("-b", "--bank"), description = "bankName:user:pass")
   var banks: java.util.List[String] = Nil
@@ -27,6 +31,7 @@ object Options {
   var startDate: String = pattern.print(DateTime.now minusDays 30)
   lazy val start = pattern.parseDateTime(startDate)
 
+  @JsonIgnoreProperties(ignoreUnknown = true)
   case class Config(ofx: Map[String, Bank])
 
   @Parameter(names = Array("-c", "--config"), description = "config file")
