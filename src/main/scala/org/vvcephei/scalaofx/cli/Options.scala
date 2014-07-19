@@ -51,7 +51,7 @@ object Options {
 
   lazy val loginToAccounts: Map[Login, Seq[Account]] = toMultiMap(for (account <- accounts) yield {
     account.split(':').toList match {
-      case b :: r :: a :: t :: Nil => logins(b) -> Account(r, a, AccountType.from(t))
+      case b :: r :: a :: t :: Nil => logins(b) -> Account(Some(r), Some(a), Some(AccountType.from(t)))
       case _ => throw new IllegalArgumentException
     }
   })

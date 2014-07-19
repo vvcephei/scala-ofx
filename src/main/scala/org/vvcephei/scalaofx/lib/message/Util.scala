@@ -21,18 +21,19 @@ object Util {
 
   def fromDateTimeString(dateTime: String): DateTime = dtf parseDateTime dateTime
 
+  def fromDateTimeZoneString(dateTime: String, zone: DateTimeZone): DateTime = dtf.withZone(zone) parseDateTime dateTime
+
   def fromDateTimeStringNoFracSec(dateTime: String): DateTime = dtfNoFracSec parseDateTime dateTime
 
-  private val dtz = """(\d+\.\d+)(\[([^:]+):([^\]]+)\])?""".r("datetime", "zone", "offset", "tzname")
-  private val dt = """(\d{14}\.\d{3})""".r("datetime")
-  private val dtNoFracSec = """(\d{14})""".r("datetime")
-  private val d = """(\d{8})""".r("date")
+  def fromDateTimeZoneStringNoFracSec(dateTime: String, zone: DateTimeZone): DateTime = dtfNoFracSec.withZone(zone) parseDateTime dateTime
+
+  private val dt = """(\d{8})(\d{6})?(\.\d{3})?(\[([^:]+)?:([^\]]+)?\])?""".r("date", "time?", "milli?", "zonegroup?", "zone:offset?", "zone:name?")
 
   def fromStringInferred(dateTime: String): DateTime = dateTime match {
-    case dtz(datetime, _, null, _) => fromDateTimeString(datetime)
-    case dtz(datetime, _, offset, _) => fromDateTimeString(datetime).withZone(DateTimeZone.forOffsetHours(offset.toInt))
-    case dt(datetime) => fromDateTimeString(datetime)
-    case dtNoFracSec(datetime) => fromDateTimeStringNoFracSec(datetime)
-    case d(date) => fromDateString(date)
+    case dt(date, null, null, _, null, _) => fromDateString(date)
+    case dt(date, time, null, _, null, _) => fromDateTimeStringNoFracSec(date + time)
+    case dt(date, time, milli, _, null, _) => fromDateTimeString(date + time + milli)
+    case dt(date, time, null, _, offset, _) => fromDateTimeZoneStringNoFracSec(date + time, DateTimeZone.forOffsetHours(offset.toInt))
+    case dt(date, time, milli, _, offset, _) => fromDateTimeZoneString(date + time + milli, DateTimeZone.forOffsetHours(offset.toInt))
   }
 }

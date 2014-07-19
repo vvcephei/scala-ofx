@@ -23,4 +23,8 @@ class UtilTest extends FunSuite {
   test("Util.fromStringInferred should parse a partial ofx date with no time") {
     assert(Util.fromStringInferred("20130813").toString() == new DateTime(2013,8,13,0,0).toString())
   }
+
+  test("Util.fromStringInferred should parse 20140611170000[0:GMT]") {
+    assert(Util.fromStringInferred("20140611170000[0:GMT]").toString() === new DateTime(2014, 06, 11, 17, 0, 0, DateTimeZone.forID("GMT")).toString())
+  }
 }

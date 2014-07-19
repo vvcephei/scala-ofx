@@ -9,9 +9,9 @@ case class BankStatementRequest(account: Account, startDate: DateTime) {
         <TRNUID>{ Util.trnuid() }</TRNUID>
         <STMTRQ>
           <BANKACCTFROM>
-            <BANKID>{ account.routing }</BANKID>
-            <ACCTID>{ account.account }</ACCTID>
-            <ACCTTYPE>{ account.`type` }</ACCTTYPE>
+            <BANKID>{ account.routing.get }</BANKID>
+            <ACCTID>{ account.account.get }</ACCTID>
+            <ACCTTYPE>{ account.`type`.get }</ACCTTYPE>
           </BANKACCTFROM>
           <INCTRAN>
             <DTSTART>{ Util.toDateString(startDate) }</DTSTART>
