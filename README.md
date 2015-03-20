@@ -66,3 +66,5 @@ Example CLI
 ./sbt assembly
 java -jar target/scala-2.10/scalaofx-assembly-1.0.jar -s 2013-01-01 -c src/main/config/config.yaml -b capitalone360:${USERNAME}:${PASSWORD} -a capitalone360:${ROUTING}:${ACCT_NUM]:SAVINGS -v
 ```
+
+
