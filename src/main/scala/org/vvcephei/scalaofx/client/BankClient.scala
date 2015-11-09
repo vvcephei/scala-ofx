@@ -86,7 +86,13 @@ case class BankClient(user: User, bank: Bank, client: Client = new Client(), deb
   def bankStatements(accounts: Seq[Account], startDate: DateTime): BankStatementResponse = {
     val request: String = bankStatementRequest(accounts, startDate)
     if (debug) println(request)
-    val response = client.resource(bank.bootstrapUrl).`type`("application/x-ofx").post(classOf[String], request)
+    val response = try {
+      client.resource(bank.bootstrapUrl).`type`("application/x-ofx").post(classOf[String], request)
+    } catch {
+      case t: Throwable =>
+        println(s"Error getting bank info from ${bank.bootstrapUrl}")
+        throw t
+    }
     val parsed = TopLevelOfxMessageParser parse response
     if (debug) println(ppr format parsed.ofx)
     BankStatement.fromOfx(parsed.ofx)
