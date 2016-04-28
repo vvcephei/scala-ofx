@@ -11,7 +11,7 @@ object Util {
 
   def toDateString(date: DateTime): String = df print date
 
-  def fromDateString(date: String): DateTime = df parseDateTime date
+  def fromDateString(date: String): DateTime = df.withZone(DateTimeZone.UTC) parseDateTime date
 
   private lazy val dtf = DateTimeFormat.forPattern("YYYYMMddHHmmss.SSS")
 
@@ -19,17 +19,17 @@ object Util {
 
   def toDateTimeString(dateTime: DateTime): String = dtf print dateTime
 
-  def fromDateTimeString(dateTime: String): DateTime = dtf parseDateTime dateTime
+  def fromDateTimeString(dateTime: String): DateTime = dtf.withZone(DateTimeZone.UTC) parseDateTime dateTime
 
   def fromDateTimeZoneString(dateTime: String, zone: DateTimeZone): DateTime = dtf.withZone(zone) parseDateTime dateTime
 
-  def fromDateTimeStringNoFracSec(dateTime: String): DateTime = dtfNoFracSec parseDateTime dateTime
+  def fromDateTimeStringNoFracSec(dateTime: String): DateTime = dtfNoFracSec.withZone(DateTimeZone.UTC) parseDateTime dateTime
 
   def fromDateTimeZoneStringNoFracSec(dateTime: String, zone: DateTimeZone): DateTime = dtfNoFracSec.withZone(zone) parseDateTime dateTime
 
   private val dt = """(\d{8})(\d{6})?(\.\d{3})?(\[([^:]+)?:([^\]]+)?\])?""".r("date", "time?", "milli?", "zonegroup?", "zone:offset?", "zone:name?")
 
-  def fromStringInferred(dateTime: String): DateTime = dateTime match {
+  def dateFromStringInferred(dateTime: String): DateTime = dateTime match {
     case dt(date, null, null, _, null, _) => fromDateString(date)
     case dt(date, time, null, _, null, _) => fromDateTimeStringNoFracSec(date + time)
     case dt(date, time, milli, _, null, _) => fromDateTimeString(date + time + milli)

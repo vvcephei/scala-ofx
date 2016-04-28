@@ -35,7 +35,7 @@ object BankStatement {
   private implicit def optText = opt(_.text) _
   private implicit def optNum = opt(_.text.toDouble) _
   private implicit def optAccountType = opt(n => AccountType.valueOf(n.text)) _
-  private implicit def optDateTime = opt(n => Util.fromStringInferred(n.text)) _
+  private implicit def optDateTime = opt(n => Util.dateFromStringInferred(n.text)) _
 
   private def bankStatements(ofx: Elem): Seq[BankStatement] =
     for {
@@ -59,7 +59,7 @@ object BankStatement {
         } yield {
           Transaction(
             TransactionType.valueOf(transactionType.text),
-            Util.fromStringInferred(posted.text),
+            Util.dateFromStringInferred(posted.text),
             amount.text.toDouble,
             id.text,
             transaction \ "NAME",
@@ -93,7 +93,7 @@ object BankStatement {
         } yield {
           Transaction(
             TransactionType.valueOf(transactionType.text),
-            Util.fromStringInferred(posted.text),
+            Util.dateFromStringInferred(posted.text),
             amount.text.toDouble,
             id.text,
             transaction \ "NAME",

@@ -1,6 +1,6 @@
 package org.vvcephei.scalaofx.lib.model.response
 
-import org.joda.time.DateTime
+import org.joda.time.{DateTime, DateTimeZone}
 import org.scalatest.FunSuite
 import org.vvcephei.scalaofx.client.SourceClient
 import org.vvcephei.scalaofx.lib.model.AccountType
@@ -17,12 +17,13 @@ class BankStatementTest extends FunSuite {
     assert(statements.statements.head.account.`type` === Some(AccountType.CHECKING))
     assert(statements.statements.head.currency === "USD")
     assert(statements.statements.head.availableBalance === None)
-    assert(statements.statements.head.startTime === Some(new DateTime("2014-05-01T12:00:00.000-05:00")))
-    assert(statements.statements.head.endTime === Some(new DateTime("2014-07-08T12:00:00.000-05:00")))
+    println(statements.statements.head.startTime)
+    assert(statements.statements.head.startTime === Some(new DateTime(2014, 5, 1, 12, 0, 0, DateTimeZone.UTC)))
+    assert(statements.statements.head.endTime === Some(new DateTime(2014, 7, 8, 12, 0, 0, DateTimeZone.UTC)))
     assert(statements.statements.head.ledgerBalance === 100.10)
     assert(statements.statements.head.transactions.length === 1)
     assert(statements.statements.head.transactions.head.`type` === TransactionType.DEBIT)
-    assert(statements.statements.head.transactions.head.posted === new DateTime("2014-07-07T12:00:00.000-05:00"))
+    assert(statements.statements.head.transactions.head.posted === new DateTime(2014, 7, 7, 12, 0, 0, DateTimeZone.UTC))
     assert(statements.statements.head.transactions.head.amount === -0.84)
     assert(statements.statements.head.transactions.head.memo === None)
     assert(statements.statements.head.transactions.head.name === Some("Trans Name"))
