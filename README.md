@@ -10,9 +10,9 @@ Loosely based / inspired by https://github.com/wesabe/lynofx
 Build
 -----
 
-compile: ```./sbt compile```
-test: ```./sbt test```
-single jar: ```./sbt assembly```
+compile: ```sbt compile```
+test: ```sbt test```
+single jar: ```sbt assembly```
 
 Usage
 -----
@@ -59,11 +59,11 @@ Example CLI
 -----------
 
 ```bash
-./sbt
+sbt
 > run -s 2013-01-01 -c src/main/config/config.yaml -b capitalone360:${USERNAME}:${PASSWORD} -a capitalone360:${ROUTING}:${ACCT_NUM]:SAVINGS -v
 
 # or
-./sbt assembly
+sbt assembly
 java -jar target/scala-2.10/scalaofx-assembly-1.0.jar -s 2013-01-01 -c src/main/config/config.yaml -b capitalone360:${USERNAME}:${PASSWORD} -a capitalone360:${ROUTING}:${ACCT_NUM]:SAVINGS -v
 ```
 
