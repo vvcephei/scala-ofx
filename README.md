@@ -10,6 +10,8 @@ Loosely based / inspired by https://github.com/wesabe/lynofx
 Build
 -----
 
+[![Build Status](https://travis-ci.org/vvcephei/scala-ofx.svg?branch=master)](https://travis-ci.org/vvcephei/scala-ofx)
+
 compile: ```sbt compile```
 test: ```sbt test```
 single jar: ```sbt assembly```
