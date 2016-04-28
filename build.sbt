@@ -6,7 +6,7 @@ name := "scala-ofx"
 
 organization := "org.vvcephei"
 
-version := "1.2"
+version := "1.3-SNAPSHOT"
 
 scalaVersion := "2.11.8"
 
