@@ -1,7 +1,3 @@
-import AssemblyKeys._
-
-// put this at the top of the file
-
 name := "scala-ofx"
 
 organization := "org.vvcephei"
@@ -33,21 +29,16 @@ libraryDependencies ++= Seq(
 
 mainClass := Some("org.vvcephei.scalaofx.cli.CLI")
 
-net.virtualvoid.sbt.graph.Plugin.graphSettings
-
-assemblySettings
-
 mainClass in assembly := Some("org.vvcephei.scalaofx.cli.CLI")
 
 publishMavenStyle := true
 
-publishTo := {
-  val nexus = "https://oss.sonatype.org/"
-  if (version.value.trim.endsWith("SNAPSHOT"))
-    Some("snapshots" at nexus + "content/repositories/snapshots")
+publishTo := Some(
+  if (isSnapshot.value)
+    Opts.resolver.sonatypeSnapshots
   else
-    Some("releases" at nexus + "service/local/staging/deploy/maven2")
-}
+    Opts.resolver.sonatypeStaging
+)
 
 publishArtifact in Test := false
 
