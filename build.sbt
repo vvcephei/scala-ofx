@@ -2,7 +2,7 @@ name := "scala-ofx"
 
 organization := "org.vvcephei"
 
-version := "1.3"
+version := "1.4"
 
 scalaVersion := "2.12.4"
 
@@ -18,8 +18,6 @@ libraryDependencies ++= Seq(
   "org.joda" % "joda-convert" % "1.9.2",
   "joda-time" % "joda-time" % "2.9.9",
   "com.github.tototoshi" %% "scala-csv" % "1.3.5",
-  "org.apache.opennlp" % "opennlp-tools" % "1.8.3",
-  "org.apache.opennlp" % "opennlp-maxent" % "3.0.3",
   "com.beust" % "jcommander" % "1.72"
 )
 
