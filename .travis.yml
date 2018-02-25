@@ -1,5 +1,5 @@
 language: scala
 jdk:
-  - openjdk7
+  - openjdk8
 script:
   - sbt test
