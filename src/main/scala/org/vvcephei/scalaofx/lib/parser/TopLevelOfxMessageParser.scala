@@ -22,7 +22,7 @@ object TopLevelOfxMessageParser {
       for (line <- lines) yield {
         if (headerline.findFirstMatchIn(line).isDefined && state == ParseState.HEADER) state = ParseState.HEADER
         else if (blankLine.findFirstMatchIn(line).isDefined && (state == ParseState.HEADER || state == ParseState.BLANKS)) state = ParseState.BLANKS
-        else if ((sgmlStart.findFirstMatchIn(line).isDefined && state == ParseState.BLANKS) || state == ParseState.OFX) state = ParseState.OFX
+        else if ((sgmlStart.findFirstMatchIn(line).isDefined && state != ParseState.OFX) || state == ParseState.OFX) state = ParseState.OFX
         else throw new IllegalStateException("Illegal top level parser state.")
 
         state match {

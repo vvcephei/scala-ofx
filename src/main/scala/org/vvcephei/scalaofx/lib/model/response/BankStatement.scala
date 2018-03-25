@@ -23,7 +23,7 @@ object BankStatement {
       status <- ofx \\ "STATUS"
       code <- status \ "CODE"
       severity <- status \ "SEVERITY"
-      message <- status \ "MESSAGE"
+      message = status \ "MESSAGE"
       if severity.text.toLowerCase == "error"
     } yield {
       BankStatementError(code.text, severity.text, message.text)
